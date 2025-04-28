@@ -12,33 +12,75 @@ struct MenuView: View {
     @StateObject private var svm = SettingsViewModel.shared
     
     var body: some View {
-        VStack {
-            Spacer()
+        ZStack {
+            AppBackgroundView(background: Color.deepPurple)
             
-            Text("Oneida Games")
-                .font(.largeTitle)
-                .bold()
-                .padding()
-            
-            Spacer()
-            
-            Button {
-                svm.play()
-                appViewModel.navigateTo(.levelSelect)
-            } label: {
-                Text("Играть")
-                    .font(.title)
-                    .bold()
-                    .foregroundColor(.white)
-                    .frame(width: 200, height: 60)
-                    .background(Color.blue)
-                    .cornerRadius(15)
-                    .shadow(radius: 5)
+            VStack {
+                Image(.logo)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 100)
+                
+                Spacer()
+                
+                CounterView(amount: appViewModel.coins)
+                
+                Spacer()
+                
+                Button {
+                    svm.play()
+                    appViewModel.navigateTo(.levelSelect)
+                } label: {
+                    MainActionView(width: 300, height: 90, text: "play", textSize: 60)
+                }
+                
+                Spacer()
+                
+                VStack(spacing: 20){
+                    Button {
+                        svm.play()
+                        appViewModel.navigateTo(.shop)
+                    } label: {
+                        MainActionView(width: 200, height: 50, text: "shop", textSize: 24)
+                    }
+                    
+                    Button {
+                        svm.play()
+                        appViewModel.navigateTo(.achievements)
+                    } label: {
+                        MainActionView(width: 200, height: 50, text: "achieve", textSize: 24)
+                    }
+                    
+                    Button {
+                        svm.play()
+                        appViewModel.navigateTo(.settings)
+                    } label: {
+                        MainActionView(width: 200, height: 50, text: "settings", textSize: 24)
+                    }
+                    
+                    HStack {
+                        Button {
+                            svm.play()
+                            appViewModel.navigateTo(.miniGames)
+                        } label: {
+                            MainActionView(width: 50, height: 50, text: "", textSize: 24)
+                                .overlay {
+                                    Image(systemName: "gamecontroller")
+                                        .resizable()
+                                        .frame(width: 30, height: 20)
+                                        .foregroundStyle(.white)
+                                }
+                        }
+                        
+                        Spacer()
+                    }
+                    .frame(maxWidth: 300)
+                }
+                
+                Spacer()
             }
-            
-            Spacer()
+            .padding()
         }
-        .padding()
     }
 }
 

@@ -1,7 +1,5 @@
-//
 //  GameViewModel.swift
 //  Oneida
-//
 //  Created by Alex on 27.04.2025.
 //
 
@@ -48,7 +46,7 @@ class GameViewModel: ObservableObject {
     }
     
     func togglePause(_ paused: Bool) {
-        // Проверка, чтобы не переключать в паузу, если уже отображается один из оверлеев
+        // Не ставим на паузу, если уже показывается какой-либо оверлей
         if paused && (showVictoryOverlay || showDefeatOverlay) {
             return
         }
@@ -72,6 +70,14 @@ class GameViewModel: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             self?.objectWillChange.send()
         }
+    }
+    
+    func pauseGame() {
+        togglePause(true)
+    }
+    
+    func resumeGame() {
+        togglePause(false)
     }
     
     func resetGame() {
@@ -213,6 +219,9 @@ extension GameViewModel: GameSceneDelegate {
     }
     
     func didCollectGoldCoin() {
-        appViewModel?.startQuiz()
+        print("Золотая монета собрана! Запускаем квиз...")
+        
+        // Теперь делегируем запуск квиза в AppViewModel
+        appViewModel?.startMusicQuiz()
     }
 }

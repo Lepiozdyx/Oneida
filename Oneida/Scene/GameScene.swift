@@ -306,7 +306,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private func handleGoldCoinCollision(_ node: SKNode?) {
         guard isGameActive else { return }
         
-        gameDelegate?.didCollectGoldCoin()
+        // Добавим отладочную информацию
+        print("Столкновение с золотой монетой обработано")
+        
+        // Важно! Явно проверим делегат перед вызовом
+        if let delegate = gameDelegate {
+            print("Вызываем делегат didCollectGoldCoin")
+            
+            // Вызываем делегат через main queue с небольшой задержкой
+            // Задержка нужна, чтобы SpriteKit успел обработать физику
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                delegate.didCollectGoldCoin()
+            }
+        } else {
+            print("ОШИБКА: делегат gameDelegate = nil")
+        }
         
         // Добавляем эффект сбора
         showCollectionEffect(at: node?.position ?? .zero, isSuccess: true, isGoldCoin: true)

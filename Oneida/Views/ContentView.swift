@@ -28,10 +28,6 @@ struct ContentView: View {
                 GameView()
                     .environmentObject(appViewModel)
                 
-            case .musicQuiz:
-                MusicQuizView()
-                    .environmentObject(appViewModel)
-                
             case .miniGames:
                 Text("Мини-игры")
                     .environmentObject(appViewModel)
@@ -47,6 +43,15 @@ struct ContentView: View {
             case .achievements:
                 Text("Достижения")
                     .environmentObject(appViewModel)
+                
+            case .quiz:
+                // Новый экран квиза
+                if let quizViewModel = appViewModel.quizViewModel {
+                    MusicQuizView(quizViewModel: quizViewModel)
+                        .transition(.scale)
+                        .zIndex(100)
+                        .environmentObject(appViewModel)
+                }
             }
         }
         .onAppear {

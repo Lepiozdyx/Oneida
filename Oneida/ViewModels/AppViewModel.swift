@@ -1,10 +1,3 @@
-//
-//  AppViewModel.swift
-//  Oneida
-//
-//  Created by Alex on 27.04.2025.
-//
-
 import SwiftUI
 import Combine
 
@@ -15,14 +8,15 @@ class AppViewModel: ObservableObject {
     @Published var gameState: GameState
     
     @Published var gameViewModel: GameViewModel?
-    @Published var quizViewModel: MusicQuizViewModel?
+    @Published var quizViewModel: MusicQuizViewModel? // Добавляем квиз на уровень AppViewModel
+    
+    // Добавляем специальную переменную для хранения экрана, с которого был открыт квиз
+    private var quizSourceScreen: AppScreen = .arcade
     
     init() {
         self.gameState = GameState.load()
         self.coins = gameState.coins
         self.gameLevel = gameState.currentLevel
-        
-        checkDailyBonus()
     }
     
     var currentTheme: String {
@@ -30,6 +24,7 @@ class AppViewModel: ObservableObject {
     }
     
     func navigateTo(_ screen: AppScreen) {
+        // Простой переход без сохранения предыдущего экрана
         currentScreen = screen
     }
     
@@ -45,17 +40,53 @@ class AppViewModel: ObservableObject {
         saveGameState()
     }
     
-    func startQuiz() {
-        quizViewModel = MusicQuizViewModel()
-        quizViewModel?.appViewModel = self
-        navigateTo(.musicQuiz)
-    }
-    
     func goToMenu() {
         // Очищаем ViewModel перед переходом в меню
         gameViewModel = nil
-        quizViewModel = nil
+        quizViewModel = nil // Обнуляем также и квиз
         navigateTo(.menu)
+    }
+    
+    // Новый метод для запуска музыкальной викторины
+    func startMusicQuiz() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // Сохраняем текущий экран как источник для квиза
+            self.quizSourceScreen = self.currentScreen
+            
+            // Создаем новый экземпляр квиза
+            self.quizViewModel = MusicQuizViewModel()
+            self.quizViewModel?.delegate = self
+            
+            // Переходим на экран квиза
+            self.navigateTo(.quiz)
+            
+            // Приостанавливаем игру
+            self.gameViewModel?.pauseGame()
+            
+            print("Переход на экран квиза выполнен. Источник: \(self.quizSourceScreen)")
+        }
+    }
+    
+    // Новый метод для возврата из квиза к игре
+    func returnFromQuiz() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            print("Возвращаемся из квиза на экран: \(self.quizSourceScreen)")
+            
+            // Возвращаемся на экран-источник (обычно .arcade)
+            self.navigateTo(self.quizSourceScreen)
+            
+            // Возобновляем игру, если вернулись на экран аркады
+            if self.quizSourceScreen == .arcade {
+                self.gameViewModel?.resumeGame()
+            }
+            
+            // Обнуляем квиз-вьюмодель
+            self.quizViewModel = nil
+        }
     }
     
     func pauseGame() {
@@ -121,24 +152,16 @@ class AppViewModel: ObservableObject {
         gameState.save()
     }
     
-    func checkDailyBonus() {
-        let calendar = Calendar.current
-        
-        if let lastLoginDate = gameState.lastLoginDate {
-            if !calendar.isDateInToday(lastLoginDate) {
-                coins += 20
-                gameState.coins = coins
-            }
-        }
-        
-        gameState.lastLoginDate = Date()
-        saveGameState()
-    }
-    
     func addCoins(_ amount: Int) {
-        coins += amount
-        gameState.coins = coins
-        saveGameState()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.coins += amount
+            self.gameState.coins = self.coins
+            self.saveGameState()
+            
+            // Можно добавить уведомление пользователя о начислении монет
+            print("Монеты добавлены: +\(amount), всего: \(self.coins)")
+        }
     }
     
     func resetAllProgress() {
@@ -146,5 +169,23 @@ class AppViewModel: ObservableObject {
         gameState = GameState.load()
         coins = 0
         gameLevel = 1
+    }
+}
+
+// MARK: - MusicQuizViewModelDelegate
+extension AppViewModel: MusicQuizViewModelDelegate {
+    func quizDidComplete(earnedCoins: Int) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // Начисляем монеты
+            self.addCoins(earnedCoins)
+            
+            // Возвращаемся на экран-источник (обычно .arcade)
+            self.returnFromQuiz()
+            
+            // Явное обновление UI
+            self.objectWillChange.send()
+        }
     }
 }

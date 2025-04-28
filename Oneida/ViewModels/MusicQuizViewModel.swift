@@ -1,4 +1,3 @@
-//
 //  MusicQuizViewModel.swift
 //  Oneida
 //
@@ -7,6 +6,11 @@
 
 import SwiftUI
 import Combine
+
+// Добавляем протокол делегата для коммуникации с GameViewModel
+protocol MusicQuizViewModelDelegate: AnyObject {
+    func quizDidComplete(earnedCoins: Int)
+}
 
 class MusicQuizViewModel: ObservableObject {
     // MARK: - Published Properties
@@ -17,10 +21,11 @@ class MusicQuizViewModel: ObservableObject {
     @Published var showCorrectAnswer = false
     @Published var quizCompleted = false
     @Published var earnedCoins = 0
+    @Published var animateProgress = false
     
     // MARK: - Properties
     
-    weak var appViewModel: AppViewModel?
+    weak var delegate: MusicQuizViewModelDelegate?
     private var cancellables = Set<AnyCancellable>()
     
     var currentQuestion: QuizQuestion? {
@@ -48,6 +53,12 @@ class MusicQuizViewModel: ObservableObject {
         showCorrectAnswer = false
         quizCompleted = false
         earnedCoins = 0
+        animateProgress = false
+        
+        // Запускаем анимацию прогресса после короткой задержки
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.animateProgress = true
+        }
     }
     
     func selectOption(_ index: Int) {
@@ -62,7 +73,7 @@ class MusicQuizViewModel: ObservableObject {
         }
         
         // После небольшой задержки переходим к следующему вопросу
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.proceedToNextQuestion()
         }
     }
@@ -73,6 +84,12 @@ class MusicQuizViewModel: ObservableObject {
         
         if currentQuestionIndex < questions.count - 1 {
             currentQuestionIndex += 1
+            
+            // Анимируем прогресс-бар
+            animateProgress = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.animateProgress = true
+            }
         } else {
             completeQuiz()
         }
@@ -81,11 +98,10 @@ class MusicQuizViewModel: ObservableObject {
     func completeQuiz() {
         quizCompleted = true
         
-        appViewModel?.addCoins(earnedCoins)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.appViewModel?.navigateTo(.arcade)
-            self.appViewModel?.resumeGame()
+        // Уведомляем делегата о завершении квиза через 1.5 секунды
+        // (чтобы пользователь успел увидеть результат)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.delegate?.quizDidComplete(earnedCoins: self.earnedCoins)
         }
     }
 }

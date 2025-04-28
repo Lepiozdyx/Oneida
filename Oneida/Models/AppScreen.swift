@@ -12,8 +12,8 @@ enum AppScreen: CaseIterable {
     case levelSelect
     case arcade
     case miniGames
-    case musicQuiz
     case settings
     case shop
     case achievements
+    case quiz
 }

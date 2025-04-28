@@ -41,21 +41,21 @@ struct MenuView: View {
                         svm.play()
                         appViewModel.navigateTo(.shop)
                     } label: {
-                        MainActionView(width: 200, height: 50, text: "shop", textSize: 24)
+                        MainActionView(width: 200, height: 50, text: "shop", textSize: 24, textColor: .black)
                     }
                     
                     Button {
                         svm.play()
                         appViewModel.navigateTo(.achievements)
                     } label: {
-                        MainActionView(width: 200, height: 50, text: "achieve", textSize: 24)
+                        MainActionView(width: 200, height: 50, text: "achieve", textSize: 24, textColor: .black)
                     }
                     
                     Button {
                         svm.play()
                         appViewModel.navigateTo(.settings)
                     } label: {
-                        MainActionView(width: 200, height: 50, text: "settings", textSize: 24)
+                        MainActionView(width: 200, height: 50, text: "settings", textSize: 24, textColor: .black)
                     }
                     
                     HStack {

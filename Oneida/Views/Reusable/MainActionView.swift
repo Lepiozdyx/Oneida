@@ -12,6 +12,7 @@ struct MainActionView: View {
     let height: CGFloat
     let text: String
     let textSize: CGFloat
+    var textColor: Color = .white
     
     var body: some View {
         Capsule()
@@ -20,11 +21,11 @@ struct MainActionView: View {
             .overlay() {
                 Capsule()
                     .stroke(lineWidth: 4)
-                    .foregroundStyle(.gray)
+                    .fill(.gray)
             }
             .overlay {
                 Text(text)
-                    .specialFont(textSize)
+                    .specialFont(textSize, color: textColor)
             }
     }
 }

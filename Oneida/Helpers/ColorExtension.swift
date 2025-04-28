@@ -30,12 +30,48 @@ extension Color {
             endPoint: .bottom
         )
     }
+    
+//    static var deepGreen: RadialGradient {
+//        RadialGradient(
+//            colors: [
+//                Color.white,
+//                Color.green
+//            ],
+//            center: .center,
+//            startRadius: 0,
+//            endRadius: 40
+//        )
+//    }
+//    
+//    static var deepRed: RadialGradient {
+//        RadialGradient(
+//            colors: [
+//                Color.white,
+//                Color.red
+//            ],
+//            center: .center,
+//            startRadius: 0,
+//            endRadius: 40
+//        )
+//    }
 }
 
 struct ColorExtension: View {
     var body: some View {
         ZStack {
             Color.deepPurple.ignoresSafeArea()
+            
+//            VStack {
+//                Rectangle()
+//                    .fill(Color.deepGreen)
+//                    .frame(width: 80, height: 80)
+//                    .cornerRadius(10)
+//                
+//                Rectangle()
+//                    .fill(Color.deepRed)
+//                    .frame(width: 80, height: 80)
+//                    .cornerRadius(10)
+//            }
         }
     }
 }

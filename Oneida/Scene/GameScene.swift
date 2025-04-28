@@ -34,8 +34,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var goldCoinTimer: Timer?
     
     // Размеры
-    private let guitarWidth: CGFloat = 40
-    private let guitarHeight: CGFloat = 100
+    private let guitarWidth: CGFloat = 50
+    private let guitarHeight: CGFloat = 120
     private let noteSize: CGFloat = 30
     private let goldCoinSize: CGFloat = 35
     

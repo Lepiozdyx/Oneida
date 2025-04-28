@@ -152,35 +152,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let useKey = Int.random(in: 0...9) == 0
         let noteType = useKey ? NoteType.key : NoteType.random(excludingKey: true)
         
-        // Создаем узел с конкретной текстурой
+        // Создаем узел с текстурой
         let note = SKSpriteNode(imageNamed: noteType.imageName)
         
-        // Если не удалось загрузить текстуру, создаем форму с цветом
-        if note.texture == nil {
-            // Запасной вариант - цветной квадрат
-            let fallbackNote = SKShapeNode(rectOf: CGSize(width: noteSize, height: noteSize))
-            fallbackNote.fillColor = SKColor(noteType.color)
-            fallbackNote.strokeColor = SKColor.white
-            fallbackNote.lineWidth = 1
-            
-            // Преобразуем SKShapeNode в SKSpriteNode
-            let texture = view?.texture(from: fallbackNote)
-            note.texture = texture
-            note.size = CGSize(width: noteSize, height: noteSize)
-        } else {
-            // Если текстура загрузилась, применяем colorMultiply
-            note.color = SKColor(noteType.color)
-            note.colorBlendFactor = 1.0
-            
-            // Устанавливаем корректный размер
-            let scale = noteSize / max(note.size.width, note.size.height)
-            note.setScale(scale)
-        }
+        // Применяем цвет к текстуре
+        note.color = SKColor(noteType.color)
+        note.colorBlendFactor = 1.0
+        
+        // Устанавливаем корректный размер
+        let scale = noteSize / max(note.size.width, note.size.height)
+        note.setScale(scale)
         
         note.name = "note-\(noteType.rawValue)"
         
-        // Случайная позиция по X
-        let randomX = CGFloat.random(in: note.size.width/2...size.width-note.size.width/2)
+        // Случайная позиция по X с отступами от краев
+        let margin: CGFloat = 16.0
+        let safeAreaMin = margin + note.size.width/2
+        let safeAreaMax = size.width - margin - note.size.width/2
+        let randomX = CGFloat.random(in: safeAreaMin...safeAreaMax)
+        
         note.position = CGPoint(x: randomX, y: size.height + note.size.height)
         note.zPosition = 5
         
@@ -199,8 +189,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         goldCoin.name = "goldCoin"
         goldCoin.size = CGSize(width: goldCoinSize, height: goldCoinSize)
         
-        // Случайная позиция по X
-        let randomX = CGFloat.random(in: goldCoin.size.width/2...size.width-goldCoin.size.width/2)
+        // Случайная позиция по X с отступами от краев
+        let margin: CGFloat = 8.0
+        let safeAreaMin = margin + goldCoin.size.width/2
+        let safeAreaMax = size.width - margin - goldCoin.size.width/2
+        let randomX = CGFloat.random(in: safeAreaMin...safeAreaMax)
+        
         goldCoin.position = CGPoint(x: randomX, y: size.height + goldCoin.size.height)
         goldCoin.zPosition = 5
         
@@ -420,13 +414,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // метод для отладки
     private func checkAssetsAvailability() {
+        var missingAssets: [String] = []
+        
         for noteType in NoteType.allCases {
             let testSprite = SKSpriteNode(imageNamed: noteType.imageName)
             if testSprite.texture == nil {
                 print("⚠️ Warning: Texture not found for \(noteType.imageName)")
+                missingAssets.append(noteType.imageName)
             } else {
                 print("✅ Texture loaded successfully for \(noteType.imageName)")
             }
+        }
+        
+        // Проверяем текстуру золотой монеты
+        let goldCoin = SKSpriteNode(imageNamed: "goldCoin")
+        if goldCoin.texture == nil {
+            print("⚠️ Warning: Texture not found for goldCoin")
+            missingAssets.append("goldCoin")
+        } else {
+            print("✅ Texture loaded successfully for goldCoin")
+        }
+        
+        // Проверяем текстуру гитары
+        let guitar = SKSpriteNode(imageNamed: "guitar")
+        if guitar.texture == nil {
+            print("⚠️ Warning: Texture not found for guitar")
+            missingAssets.append("guitar")
+        } else {
+            print("✅ Texture loaded successfully for guitar")
+        }
+        
+        // Если есть отсутствующие текстуры, сообщаем об этом в консоль
+        if !missingAssets.isEmpty {
+            print("🚨 CRITICAL ERROR: Missing asset textures: \(missingAssets.joined(separator: ", "))")
         }
     }
 }

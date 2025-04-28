@@ -15,12 +15,10 @@ struct GameView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // SpriteKit Game Scene
                 SpriteKitGameView(size: geometry.size)
                     .environmentObject(appViewModel)
                     .edgesIgnoringSafeArea(.all)
                 
-                // UI Overlay - теперь напрямую передаём gameViewModel как ObservedObject
                 if let gameViewModel = appViewModel.gameViewModel {
                     GameOverlayView(gameViewModel: gameViewModel)
                         .environmentObject(appViewModel)
@@ -62,6 +60,8 @@ struct GameView: View {
     }
 }
 
+// MARK: - SpriteKitGameView
+
 struct SpriteKitGameView: UIViewRepresentable {
     @EnvironmentObject private var appViewModel: AppViewModel
     let size: CGSize
@@ -88,7 +88,8 @@ struct SpriteKitGameView: UIViewRepresentable {
     }
 }
 
-// Обновленный GameOverlayView с явным ObservedObject для обновления UI
+// MARK: - GameOverlayView
+
 struct GameOverlayView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     @ObservedObject var gameViewModel: GameViewModel
@@ -188,6 +189,8 @@ struct GameOverlayView: View {
     }
 }
 
+// MARK: - PauseOverlayView
+
 struct PauseOverlayView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     
@@ -239,6 +242,8 @@ struct PauseOverlayView: View {
     }
 }
 
+// MARK: - VictoryOverlayView
+
 struct VictoryOverlayView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     @State private var showCoinAnimation = false
@@ -289,6 +294,7 @@ struct VictoryOverlayView: View {
     }
 }
 
+// MARK: - DefeatOverlayView
 struct DefeatOverlayView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     

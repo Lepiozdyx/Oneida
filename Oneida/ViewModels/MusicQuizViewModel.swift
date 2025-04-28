@@ -80,11 +80,12 @@ class MusicQuizViewModel: ObservableObject {
     
     func completeQuiz() {
         quizCompleted = true
+        
         appViewModel?.addCoins(earnedCoins)
         
-        // Возвращаемся к игре
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.appViewModel?.navigateTo(.arcade)
+            self.appViewModel?.resumeGame()
         }
     }
 }

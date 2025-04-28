@@ -13,7 +13,7 @@ class GameViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var score: Int = 0
     @Published var targetNoteType: NoteType = .note1
-    @Published var lives: Int = 3
+    @Published var lives: Int = 5
     @Published var timeRemaining: Double = 60.0
     @Published var isPaused: Bool = false
     @Published var showVictoryOverlay: Bool = false
@@ -187,12 +187,14 @@ class GameViewModel: ObservableObject {
 extension GameViewModel: GameSceneDelegate {
     func didCollectNote(ofType type: NoteType) {
         if type == targetNoteType {
-            // Правильная нота
+            // Правильная нота - начисляем очки
             score += 1
             appViewModel?.gameState.notesCollected += 1
         } else {
-            // Неправильная нота
+            // Неправильная нота - отнимаем жизнь
             lives -= 1
+            
+            // Проверяем условие поражения
             if lives <= 0 {
                 gameOver(win: false)
             }
@@ -204,21 +206,13 @@ extension GameViewModel: GameSceneDelegate {
         }
     }
     
-    func didMissNote() {
-        lives -= 1
-        
-        // Обновляем UI
+    func didMissNote(ofType type: NoteType) {
         DispatchQueue.main.async { [weak self] in
             self?.objectWillChange.send()
-        }
-        
-        if lives <= 0 {
-            gameOver(win: false)
         }
     }
     
     func didCollectGoldCoin() {
-        // Переходим к бонусной викторине
         appViewModel?.startQuiz()
     }
 }

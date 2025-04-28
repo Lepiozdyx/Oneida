@@ -10,7 +10,7 @@ import SwiftUI
 
 protocol GameSceneDelegate: AnyObject {
     func didCollectNote(ofType type: NoteType)
-    func didMissNote()
+    func didMissNote(ofType type: NoteType)
     func didCollectGoldCoin()
 }
 
@@ -44,7 +44,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
         backgroundColor = .black
         
-        // Проверяем доступность ассетов
         checkAssetsAvailability()
         
         setupPhysics()
@@ -277,17 +276,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let bodyB = contact.bodyB
         
         if (bodyA.categoryBitMask == PhysicsCategory.guitar && bodyB.categoryBitMask == PhysicsCategory.note) ||
-           (bodyA.categoryBitMask == PhysicsCategory.note && bodyB.categoryBitMask == PhysicsCategory.guitar) {
+            (bodyA.categoryBitMask == PhysicsCategory.note && bodyB.categoryBitMask == PhysicsCategory.guitar) {
             // Столкновение гитары и ноты
             let noteBody = bodyA.categoryBitMask == PhysicsCategory.note ? bodyA : bodyB
             handleNoteCollision(noteBody.node)
         } else if (bodyA.categoryBitMask == PhysicsCategory.guitar && bodyB.categoryBitMask == PhysicsCategory.goldCoin) ||
-                  (bodyA.categoryBitMask == PhysicsCategory.goldCoin && bodyB.categoryBitMask == PhysicsCategory.guitar) {
+                    (bodyA.categoryBitMask == PhysicsCategory.goldCoin && bodyB.categoryBitMask == PhysicsCategory.guitar) {
             // Столкновение гитары и золотой монеты
             let coinBody = bodyA.categoryBitMask == PhysicsCategory.goldCoin ? bodyA : bodyB
             handleGoldCoinCollision(coinBody.node)
         } else if (bodyA.categoryBitMask == PhysicsCategory.ground && bodyB.categoryBitMask == PhysicsCategory.note) ||
-                  (bodyA.categoryBitMask == PhysicsCategory.note && bodyB.categoryBitMask == PhysicsCategory.ground) {
+                    (bodyA.categoryBitMask == PhysicsCategory.note && bodyB.categoryBitMask == PhysicsCategory.ground) {
             // Нота упала на землю (пропущена)
             let noteBody = bodyA.categoryBitMask == PhysicsCategory.note ? bodyA : bodyB
             handleNoteMissed(noteBody.node)
@@ -329,12 +328,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private func handleNoteMissed(_ node: SKNode?) {
         guard let noteName = node?.name, isGameActive else { return }
         
-        // Определяем тип ноты
+        // Определяем тип ноты из имени
         let components = noteName.split(separator: "-")
-        if components.count > 1 {
-            gameDelegate?.didMissNote()
+        if components.count > 1, let typeRawValue = Int(components[1]), let type = NoteType(rawValue: typeRawValue) {
+            // Передаем тип пропущенной ноты в делегат
+            gameDelegate?.didMissNote(ofType: type)
             
-            // Добавляем эффект промаха
+            // Добавляем эффект пропуска
             showCollectionEffect(at: node?.position ?? .zero, isSuccess: false)
             
             // Удаляем ноту

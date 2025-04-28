@@ -45,7 +45,6 @@ struct ContentView: View {
                     .environmentObject(appViewModel)
                 
             case .quiz:
-                // Новый экран квиза
                 if let quizViewModel = appViewModel.quizViewModel {
                     MusicQuizView(quizViewModel: quizViewModel)
                         .transition(.scale)

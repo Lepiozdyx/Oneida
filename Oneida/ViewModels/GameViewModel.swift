@@ -12,7 +12,7 @@ class GameViewModel: ObservableObject {
     @Published var score: Int = 0
     @Published var targetNoteType: NoteType = .note1
     @Published var lives: Int = 5
-    @Published var timeRemaining: Double = 10.0
+    @Published var timeRemaining: Double = 30.0
     @Published var isPaused: Bool = false
     @Published var showVictoryOverlay: Bool = false
     @Published var showDefeatOverlay: Bool = false
@@ -115,8 +115,6 @@ class GameViewModel: ObservableObject {
             
             // Снова обновляем UI
             self.objectWillChange.send()
-            
-            print("GameViewModel полностью сброшен: lives=\(self.lives), score=\(self.score), showVictoryOverlay=\(self.showVictoryOverlay)")
         }
     }
     
@@ -234,9 +232,6 @@ extension GameViewModel: GameSceneDelegate {
     }
     
     func didCollectGoldCoin() {
-        print("Золотая монета собрана! Запускаем квиз...")
-        
-        // Теперь делегируем запуск квиза в AppViewModel
         appViewModel?.startMusicQuiz()
     }
 }

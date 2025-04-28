@@ -34,7 +34,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var goldCoinTimer: Timer?
     
     // Размеры
-    private let guitarWidth: CGFloat = 50
+    private let guitarWidth: CGFloat = 40
     private let guitarHeight: CGFloat = 100
     private let noteSize: CGFloat = 30
     private let goldCoinSize: CGFloat = 35
@@ -306,20 +306,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private func handleGoldCoinCollision(_ node: SKNode?) {
         guard isGameActive else { return }
         
-        // Добавим отладочную информацию
-        print("Столкновение с золотой монетой обработано")
-        
         // Важно! Явно проверим делегат перед вызовом
         if let delegate = gameDelegate {
-            print("Вызываем делегат didCollectGoldCoin")
-            
             // Вызываем делегат через main queue с небольшой задержкой
             // Задержка нужна, чтобы SpriteKit успел обработать физику
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 delegate.didCollectGoldCoin()
             }
-        } else {
-            print("ОШИБКА: делегат gameDelegate = nil")
         }
         
         // Добавляем эффект сбора
@@ -366,7 +359,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let emitter = SKEmitterNode()
         emitter.position = position
         
-        // Создаем простую частицу вместо использования текстуры
+        // Создаем простую частицу
         let particleNode = SKShapeNode(circleOfRadius: 3)
         particleNode.fillColor = .white
         particleNode.strokeColor = .clear
@@ -433,34 +426,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for noteType in NoteType.allCases {
             let testSprite = SKSpriteNode(imageNamed: noteType.imageName)
             if testSprite.texture == nil {
-                print("⚠️ Warning: Texture not found for \(noteType.imageName)")
                 missingAssets.append(noteType.imageName)
-            } else {
-                print("✅ Texture loaded successfully for \(noteType.imageName)")
             }
         }
         
         // Проверяем текстуру золотой монеты
         let goldCoin = SKSpriteNode(imageNamed: "goldCoin")
         if goldCoin.texture == nil {
-            print("⚠️ Warning: Texture not found for goldCoin")
             missingAssets.append("goldCoin")
-        } else {
-            print("✅ Texture loaded successfully for goldCoin")
         }
         
         // Проверяем текстуру гитары
         let guitar = SKSpriteNode(imageNamed: "guitar")
         if guitar.texture == nil {
-            print("⚠️ Warning: Texture not found for guitar")
             missingAssets.append("guitar")
-        } else {
-            print("✅ Texture loaded successfully for guitar")
         }
         
-        // Если есть отсутствующие текстуры, сообщаем об этом в консоль
+        // Если есть отсутствующие текстуры, принтим в консоль
         if !missingAssets.isEmpty {
-            print("🚨 CRITICAL ERROR: Missing asset textures: \(missingAssets.joined(separator: ", "))")
+            print("CRITICAL ERROR: Missing asset textures: \(missingAssets.joined(separator: ", "))")
         }
     }
 }

@@ -64,8 +64,6 @@ class AppViewModel: ObservableObject {
             
             // Приостанавливаем игру
             self.gameViewModel?.pauseGame()
-            
-            print("Переход на экран квиза выполнен. Источник: \(self.quizSourceScreen)")
         }
     }
     
@@ -73,8 +71,6 @@ class AppViewModel: ObservableObject {
     func returnFromQuiz() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            
-            print("Возвращаемся из квиза на экран: \(self.quizSourceScreen)")
             
             // Возвращаемся на экран-источник (обычно .arcade)
             self.navigateTo(self.quizSourceScreen)
@@ -142,8 +138,6 @@ class AppViewModel: ObservableObject {
                 if let gameVM = self.gameViewModel {
                     gameVM.objectWillChange.send()
                 }
-                
-                print("AppViewModel: рестарт уровня завершен, запрошено обновление UI")
             }
         }
     }
@@ -172,9 +166,6 @@ class AppViewModel: ObservableObject {
             self.coins += amount
             self.gameState.coins = self.coins
             self.saveGameState()
-            
-            // Можно добавить уведомление пользователя о начислении монет
-            print("Монеты добавлены: +\(amount), всего: \(self.coins)")
         }
     }
     

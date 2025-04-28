@@ -80,9 +80,6 @@ struct MusicQuizView: View {
             )
             .padding(.horizontal, 20)
         }
-        .onAppear {
-            print("MusicQuizView appeared!")
-        }
     }
 }
 

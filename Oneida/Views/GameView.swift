@@ -157,7 +157,7 @@ struct GameOverlayView: View {
                 .padding(.vertical, 5)
                 .background(Color.black.opacity(0.6))
                 .cornerRadius(8)
-                .id("lives-\(gameViewModel.lives)") // Важно! Добавляем уникальный id для форсирования обновления при изменении числа жизней
+                .id("lives-\(gameViewModel.lives)")
                 
                 Spacer()
                 
@@ -184,13 +184,9 @@ struct GameOverlayView: View {
             .padding()
         }
         .onChange(of: gameViewModel.lives) { newValue in
-            // Обновляем внутреннее состояние при изменении lives в модели
             currentLives = newValue
-            // Выводим отладочную информацию
-            print("lives изменены: \(newValue)")
         }
         .onAppear {
-            // Инициализируем состояние при появлении view
             currentLives = gameViewModel.lives
         }
     }
@@ -330,7 +326,7 @@ struct VictoryOverlayView: View {
                         .background(Color.blue)
                         .cornerRadius(10)
                 }
-                .disabled(navigatingToNextLevel) // Блокируем кнопку после нажатия
+                .disabled(navigatingToNextLevel)
             }
         }
     }

@@ -94,6 +94,9 @@ struct GameOverlayView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     @ObservedObject var gameViewModel: GameViewModel
     
+    // Добавляем специальное состояние для отслеживания текущего значения жизней
+    @State private var currentLives: Int = 5
+    
     var body: some View {
         VStack {
             HStack {
@@ -135,7 +138,7 @@ struct GameOverlayView: View {
             Spacer()
             
             HStack {
-                // Жизни - теперь привязаны к gameViewModel напрямую
+                // Жизни - обновленная версия отображения с отслеживанием изменений
                 HStack {
                     let livesCount = max(0, gameViewModel.lives)
                     if livesCount > 0 {
@@ -154,10 +157,11 @@ struct GameOverlayView: View {
                 .padding(.vertical, 5)
                 .background(Color.black.opacity(0.6))
                 .cornerRadius(8)
+                .id("lives-\(gameViewModel.lives)") // Важно! Добавляем уникальный id для форсирования обновления при изменении числа жизней
                 
                 Spacer()
                 
-                // Счет - теперь привязан к gameViewModel напрямую
+                // Счет
                 Text("Счет: \(gameViewModel.score)")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -168,7 +172,7 @@ struct GameOverlayView: View {
                 
                 Spacer()
                 
-                // Таймер - теперь привязан к gameViewModel напрямую
+                // Таймер
                 Text(timeString)
                     .font(.headline)
                     .foregroundColor(.white)
@@ -178,6 +182,16 @@ struct GameOverlayView: View {
                     .cornerRadius(8)
             }
             .padding()
+        }
+        .onChange(of: gameViewModel.lives) { newValue in
+            // Обновляем внутреннее состояние при изменении lives в модели
+            currentLives = newValue
+            // Выводим отладочную информацию
+            print("lives изменены: \(newValue)")
+        }
+        .onAppear {
+            // Инициализируем состояние при появлении view
+            currentLives = gameViewModel.lives
         }
     }
     
@@ -247,6 +261,7 @@ struct PauseOverlayView: View {
 struct VictoryOverlayView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     @State private var showCoinAnimation = false
+    @State private var navigatingToNextLevel = false
     
     var body: some View {
         ZStack {
@@ -269,7 +284,21 @@ struct VictoryOverlayView: View {
                     }
                 
                 Button {
-                    appViewModel.goToNextLevel()
+                    // Защита от двойных нажатий
+                    guard !navigatingToNextLevel else { return }
+                    navigatingToNextLevel = true
+                    
+                    // Сначала явно скрываем оверлей, даже до вызова goToNextLevel
+                    if let gameVM = appViewModel.gameViewModel {
+                        gameVM.showVictoryOverlay = false
+                    }
+                    
+                    // Небольшая задержка перед переходом для завершения анимации исчезновения
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        appViewModel.goToNextLevel()
+                        // Дополнительно обновляем UI
+                        appViewModel.objectWillChange.send()
+                    }
                 } label: {
                     Text("Следующий уровень")
                         .font(.title)
@@ -278,9 +307,21 @@ struct VictoryOverlayView: View {
                         .background(Color.green)
                         .cornerRadius(10)
                 }
+                .disabled(navigatingToNextLevel) // Блокируем кнопку после нажатия
                 
                 Button {
-                    appViewModel.goToMenu()
+                    // Защита от двойных нажатий
+                    guard !navigatingToNextLevel else { return }
+                    navigatingToNextLevel = true
+                    
+                    // Сначала явно скрываем оверлей
+                    if let gameVM = appViewModel.gameViewModel {
+                        gameVM.showVictoryOverlay = false
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        appViewModel.goToMenu()
+                    }
                 } label: {
                     Text("Меню")
                         .font(.title)
@@ -289,6 +330,7 @@ struct VictoryOverlayView: View {
                         .background(Color.blue)
                         .cornerRadius(10)
                 }
+                .disabled(navigatingToNextLevel) // Блокируем кнопку после нажатия
             }
         }
     }

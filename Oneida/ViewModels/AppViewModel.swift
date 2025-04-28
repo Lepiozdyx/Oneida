@@ -126,11 +126,25 @@ class AppViewModel: ObservableObject {
     }
     
     func restartLevel() {
-        // Используем DispatchQueue.main.async для обеспечения обновления UI
-        DispatchQueue.main.async {
+        // Гарантируем выполнение на main thread
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // Вызываем resetGame на gameViewModel и ждем его завершения
             self.gameViewModel?.resetGame()
-            // Явно обновляем UI после рестарта
-            self.objectWillChange.send()
+            
+            // Пауза, чтобы дать время игре полностью перезагрузиться
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                // Даем дополнительный сигнал об обновлении UI
+                self.objectWillChange.send()
+                
+                // Дополнительно форсируем обновление gameViewModel
+                if let gameVM = self.gameViewModel {
+                    gameVM.objectWillChange.send()
+                }
+                
+                print("AppViewModel: рестарт уровня завершен, запрошено обновление UI")
+            }
         }
     }
     

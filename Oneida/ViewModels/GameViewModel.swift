@@ -12,7 +12,7 @@ class GameViewModel: ObservableObject {
     @Published var score: Int = 0
     @Published var targetNoteType: NoteType = .note1
     @Published var lives: Int = 5
-    @Published var timeRemaining: Double = 60.0
+    @Published var timeRemaining: Double = 10.0
     @Published var isPaused: Bool = false
     @Published var showVictoryOverlay: Bool = false
     @Published var showDefeatOverlay: Bool = false
@@ -81,27 +81,42 @@ class GameViewModel: ObservableObject {
     }
     
     func resetGame() {
-        // Сначала отменяем все таймеры
+        // Критически важно! Сначала сбрасываем флаги оверлеев перед асинхронными операциями
+        self.showVictoryOverlay = false
+        self.showDefeatOverlay = false
+        
+        // Даем сигнал на обновление UI немедленно
+        self.objectWillChange.send()
+        
+        // Далее выполняем остальные операции сброса
         gameTimer?.invalidate()
         targetNoteTimer?.invalidate()
+        gameScene?.pauseGame()
         
-        // Сбрасываем все игровые параметры
-        score = 0
-        lives = 3
-        timeRemaining = 60.0
-        isPaused = false
-        showVictoryOverlay = false
-        showDefeatOverlay = false
-        
-        // Устанавливаем новые таймеры
-        setupTimers()
-        
-        // Сбрасываем состояние сцены
-        gameScene?.resetGame()
-        
-        // Явно вызываем обновление UI
+        // Асинхронное выполнение остальных операций сброса
         DispatchQueue.main.async { [weak self] in
-            self?.objectWillChange.send()
+            guard let self = self else { return }
+            
+            // Сбрасываем все остальные значения
+            self.score = 0
+            self.lives = 5
+            self.timeRemaining = 60.0
+            self.isPaused = false
+            
+            // Повторно сбрасываем флаги оверлеев для гарантии
+            self.showVictoryOverlay = false
+            self.showDefeatOverlay = false
+            
+            // Устанавливаем новые таймеры
+            self.setupTimers()
+            
+            // Сбрасываем сцену
+            self.gameScene?.resetGame()
+            
+            // Снова обновляем UI
+            self.objectWillChange.send()
+            
+            print("GameViewModel полностью сброшен: lives=\(self.lives), score=\(self.score), showVictoryOverlay=\(self.showVictoryOverlay)")
         }
     }
     

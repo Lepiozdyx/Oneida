@@ -33,7 +33,7 @@ struct ContentView: View {
                     .environmentObject(appViewModel)
                 
             case .settings:
-                Text("Настройки")
+                SettingsView()
                     .environmentObject(appViewModel)
                 
             case .shop:

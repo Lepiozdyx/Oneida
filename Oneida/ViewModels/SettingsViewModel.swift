@@ -35,16 +35,13 @@ import AVFoundation
     }
     
     static let shared = SettingsViewModel()
-    
     private let defaults = UserDefaults.standard
     private var audioPlayer: AVAudioPlayer?
     private var soundPlayer: AVAudioPlayer?
-    
     private let soundKey = "appsound"
     private let musicKey = "appmusic"
-    
-    private let soundResourceName = "push"    // звук клика кнопки
-    private let musicResourceName = "music"   // фоновая музыка
+    private let soundResourceName = "buttonSound"    // звук клика кнопки
+    private let musicResourceName = "pianoBack"   // фоновая музыка
     
     private init() {
         self.soundIsOn = true

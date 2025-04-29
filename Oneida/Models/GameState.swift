@@ -12,8 +12,11 @@ struct GameState: Codable {
     var maxCompletedLevel: Int = 0
     var coins: Int = 0
     var lastLoginDate: Date?
-    var completedAchievements: [String] = []
-    var notifiedAchievements: [String] = []
+    
+    // Достижения
+    var completedAchievements: [String] = [] // Достигнутые, но еще не полученные награды
+    var notifiedAchievements: [String] = [] // Достигнутые и уже полученные награды
+    
     var unlockedMiniGames: [String] = ["guess_number"] // Начальная разблокированная мини-игра
     var purchasedThemes: [String] = ["default"]
     var currentThemeId: String = "default"
@@ -25,9 +28,10 @@ struct GameState: Codable {
     
     var tutorialCompleted: Bool = false
     
+    // Трекинг для достижений
     var levelsCompleted: Int = 0
     var notesCollected: Int = 0
-    var perfectLevels: Int = 0
+    var perfectLevels: Int = 0 // Для "Perfect Melody" achievement
     
     var lastDailyRewardClaimDate: Date?
     

@@ -17,6 +17,13 @@ class GameViewModel: ObservableObject {
     @Published var showVictoryOverlay: Bool = false
     @Published var showDefeatOverlay: Bool = false
     
+    // MARK: - Achievement Tracking Properties
+    @Published var consecutiveCorrectNotes: Int = 0
+    @Published var totalWrongNotes: Int = 0
+    @Published var missedNoteColors: Set<NoteType> = []
+    @Published var notesIn5Seconds: Int = 0
+    private var recentNotesTimestamps: [Date] = []
+    
     // MARK: - Private Properties
     private var gameScene: GameScene?
     private var targetNoteTimer: Timer?
@@ -107,6 +114,13 @@ class GameViewModel: ObservableObject {
             self.timeRemaining = 60.0
             self.isPaused = false
             
+            // Сбрасываем счетчики достижений
+            self.consecutiveCorrectNotes = 0
+            self.totalWrongNotes = 0
+            self.missedNoteColors = []
+            self.notesIn5Seconds = 0
+            self.recentNotesTimestamps = []
+            
             // Повторно сбрасываем флаги оверлеев для гарантии
             self.showVictoryOverlay = false
             self.showDefeatOverlay = false
@@ -120,6 +134,34 @@ class GameViewModel: ObservableObject {
             // Снова обновляем UI
             self.objectWillChange.send()
         }
+    }
+    
+    // MARK: - Achievement Tracking
+    
+    func updateAchievementTracking(noteType: NoteType, isCorrect: Bool) {
+        // Tracking for First Chord - 10 consecutive correct notes
+        if isCorrect {
+            consecutiveCorrectNotes += 1
+        } else {
+            consecutiveCorrectNotes = 0
+            totalWrongNotes += 1
+            missedNoteColors.insert(noteType)
+        }
+        
+        // Tracking for Tempo Solo - 5 notes in 5 seconds
+        let now = Date()
+        recentNotesTimestamps.append(now)
+        
+        // Remove timestamps older than 5 seconds
+        recentNotesTimestamps = recentNotesTimestamps.filter {
+            now.timeIntervalSince($0) <= 5.0
+        }
+        
+        // Count notes in the last 5 seconds
+        notesIn5Seconds = recentNotesTimestamps.count
+        
+        // Check achievements after updating tracking values
+        appViewModel?.checkAchievements(gameViewModel: self)
     }
     
     // MARK: - Private Methods
@@ -187,6 +229,8 @@ class GameViewModel: ObservableObject {
             // Показываем соответствующий оверлей
             if win {
                 self.showVictoryOverlay = true
+                // Проверяем достижения перед вызовом showVictory
+                self.appViewModel?.checkAchievements(gameViewModel: self)
                 self.appViewModel?.showVictory()
             } else {
                 self.showDefeatOverlay = true
@@ -213,9 +257,11 @@ extension GameViewModel: GameSceneDelegate {
             // Правильная нота - начисляем очки
             score += 1
             appViewModel?.gameState.notesCollected += 1
+            updateAchievementTracking(noteType: type, isCorrect: true)
         } else {
             // Неправильная нота - отнимаем жизнь
             lives -= 1
+            updateAchievementTracking(noteType: type, isCorrect: false)
             
             // Проверяем условие поражения
             if lives <= 0 {
@@ -230,6 +276,11 @@ extension GameViewModel: GameSceneDelegate {
     }
     
     func didMissNote(ofType type: NoteType) {
+        // Для достижения Colour Symphony отслеживаем пропущенные ноты
+        if type == targetNoteType {
+            missedNoteColors.insert(type)
+        }
+        
         DispatchQueue.main.async { [weak self] in
             self?.objectWillChange.send()
         }

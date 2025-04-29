@@ -41,7 +41,7 @@ struct ContentView: View {
                     .environmentObject(appViewModel)
                 
             case .achievements:
-                Text("Достижения")
+                AchievementView()
                     .environmentObject(appViewModel)
                 
             case .quiz:

@@ -47,7 +47,7 @@ struct ShopView: View {
                 }
                 
                 Text("Shop")
-                    .specialFont(60)
+                    .specialFont(40)
                     .scaleEffect(titleScale)
                     .opacity(titleOpacity)
                 

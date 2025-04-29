@@ -1,3 +1,8 @@
+//  GameViewModel.swift
+//  Oneida
+//  Created by Alex on 27.04.2025.
+//
+
 import SwiftUI
 import Combine
 
@@ -9,6 +14,7 @@ class AppViewModel: ObservableObject {
     
     @Published var gameViewModel: GameViewModel?
     @Published var quizViewModel: MusicQuizViewModel? // Добавляем квиз на уровень AppViewModel
+    @Published var achievementViewModel: AchievementViewModel? // Добавляем ViewModel для достижений
     
     // Добавляем специальную переменную для хранения экрана, с которого был открыт квиз
     private var quizSourceScreen: AppScreen = .arcade
@@ -24,7 +30,16 @@ class AppViewModel: ObservableObject {
     }
     
     func navigateTo(_ screen: AppScreen) {
-        // Простой переход без сохранения предыдущего экрана
+        // Если переходим на экран достижений, инициализируем ViewModel заранее
+        if screen == .achievements {
+            if achievementViewModel == nil {
+                achievementViewModel = AchievementViewModel()
+            }
+            // Устанавливаем appViewModel до перехода на экран
+            achievementViewModel?.appViewModel = self
+        }
+        
+        // Переход после подготовки ViewModel
         currentScreen = screen
     }
     
@@ -113,6 +128,13 @@ class AppViewModel: ObservableObject {
         coins += 10
         gameState.coins = coins
         
+        // Проверяем достижение Colour Maestro при завершении уровня
+        if gameState.levelsCompleted >= 10 {
+            let achievementVM = AchievementViewModel()
+            achievementVM.appViewModel = self
+            achievementVM.unlockAchievement("colour_maestro")
+        }
+        
         saveGameState()
     }
     
@@ -174,6 +196,18 @@ class AppViewModel: ObservableObject {
         gameState = GameState.load()
         coins = 0
         gameLevel = 1
+    }
+    
+    // MARK: - Achievement Methods
+    
+    func checkAchievements(gameViewModel: GameViewModel) {
+        // Создаём новый экземпляр если текущий не инициализирован
+        if achievementViewModel == nil {
+            achievementViewModel = AchievementViewModel()
+            achievementViewModel?.appViewModel = self
+        }
+        
+        achievementViewModel?.checkAndUnlockAchievements(gameViewModel: gameViewModel)
     }
 }
 

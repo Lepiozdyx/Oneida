@@ -46,6 +46,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         checkAssetsAvailability()
         
+        setupBackground()
         setupPhysics()
         setupGuitar()
         setupGround()
@@ -60,6 +61,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private func setupPhysics() {
         physicsWorld.gravity = CGVector(dx: 0, dy: -5)
         physicsWorld.contactDelegate = self
+    }
+    
+    private func setupBackground() {
+        let effectNode = SKEffectNode()
+        effectNode.position = CGPoint(x: frame.midX, y: frame.midY)
+        effectNode.zPosition = -100
+        
+        let backgroundImageName = "bg2"
+        let background = SKSpriteNode(imageNamed: backgroundImageName)
+        
+        let scaleX = frame.width / background.size.width
+        let scaleY = frame.height / background.size.height
+        let scale = max(scaleX, scaleY)
+        background.setScale(scale)
+        background.zPosition = -100
+        
+        effectNode.addChild(background)
+        addChild(effectNode)
     }
     
     private func setupGuitar() {

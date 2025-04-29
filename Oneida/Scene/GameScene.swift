@@ -33,11 +33,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var notesSpawnTimer: Timer?
     private var goldCoinTimer: Timer?
     
+    // Добавляем свойства для хранения ID инструмента и фона
+    private var instrumentId: String
+    private var backgroundId: String
+    
     // Размеры
     private let guitarWidth: CGFloat = 50
     private let guitarHeight: CGFloat = 120
     private let noteSize: CGFloat = 30
     private let goldCoinSize: CGFloat = 35
+    
+    // MARK: - Инициализация
+    
+    init(size: CGSize, instrumentId: String, backgroundId: String) {
+        self.instrumentId = instrumentId
+        self.backgroundId = backgroundId
+        super.init(size: size)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.instrumentId = "guitar"
+        self.backgroundId = "bg2"
+        super.init(coder: aDecoder)
+    }
     
     // MARK: - Lifecycle
     
@@ -68,8 +86,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         effectNode.position = CGPoint(x: frame.midX, y: frame.midY)
         effectNode.zPosition = -100
         
-        let backgroundImageName = "bg2"
+        let backgroundImageName = backgroundId
         let background = SKSpriteNode(imageNamed: backgroundImageName)
+        
+        if background.texture == nil {
+            let defaultBackground = SKSpriteNode(imageNamed: "bg2")
+            if defaultBackground.texture != nil {
+                background.texture = defaultBackground.texture
+                background.size = defaultBackground.size
+            }
+        }
         
         let scaleX = frame.width / background.size.width
         let scaleY = frame.height / background.size.height
@@ -82,7 +108,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private func setupGuitar() {
-        guitar = SKSpriteNode(imageNamed: "guitar")
+        guitar = SKSpriteNode(imageNamed: instrumentId)
+        
+        if guitar?.texture == nil {
+            guitar = SKSpriteNode(imageNamed: "guitar")
+        }
         
         guard let guitar = guitar else { return }
         

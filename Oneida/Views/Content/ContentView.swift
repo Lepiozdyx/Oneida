@@ -37,7 +37,7 @@ struct ContentView: View {
                     .environmentObject(appViewModel)
                 
             case .shop:
-                Text("Магазин")
+                ShopView()
                     .environmentObject(appViewModel)
                 
             case .achievements:

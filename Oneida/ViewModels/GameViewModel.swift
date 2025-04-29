@@ -12,7 +12,7 @@ class GameViewModel: ObservableObject {
     @Published var score: Int = 0
     @Published var targetNoteType: NoteType = .note1
     @Published var lives: Int = 5
-    @Published var timeRemaining: Double = 30.0
+    @Published var timeRemaining: Double = 60.0
     @Published var isPaused: Bool = false
     @Published var showVictoryOverlay: Bool = false
     @Published var showDefeatOverlay: Bool = false
@@ -38,7 +38,11 @@ class GameViewModel: ObservableObject {
     // MARK: - Public Methods
     
     func setupScene(size: CGSize) -> GameScene {
-        let scene = GameScene(size: size)
+        // Получаем текущие идентификаторы тем из appViewModel
+        let instrumentId = appViewModel?.gameState.currentInstrumentId ?? "guitar" // По умолчанию
+        let backgroundId = appViewModel?.gameState.currentBackgroundId ?? "bg2" // По умолчанию
+        
+        let scene = GameScene(size: size, instrumentId: instrumentId, backgroundId: backgroundId)
         scene.scaleMode = .aspectFill
         scene.gameDelegate = self
         gameScene = scene

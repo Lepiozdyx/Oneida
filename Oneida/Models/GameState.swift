@@ -17,6 +17,12 @@ struct GameState: Codable {
     var unlockedMiniGames: [String] = ["guess_number"] // Начальная разблокированная мини-игра
     var purchasedThemes: [String] = ["default"]
     var currentThemeId: String = "default"
+    
+    var purchasedInstruments: [String] = ["guitar"]
+    var purchasedBackgrounds: [String] = ["bg2"]
+    var currentInstrumentId: String = "guitar"
+    var currentBackgroundId: String = "bg2"
+    
     var tutorialCompleted: Bool = false
     
     var levelsCompleted: Int = 0
@@ -26,7 +32,7 @@ struct GameState: Codable {
     var lastDailyRewardClaimDate: Date?
     
     var maxAvailableLevel: Int {
-        return min(maxCompletedLevel + 1, 15) // Всего 15 уровней
+        return min(maxCompletedLevel + 1, 15)
     }
 }
 
@@ -58,7 +64,7 @@ extension GameState {
             UserDefaults.standard.set(encoded, forKey: GameState.gameStateKey)
             UserDefaults.standard.synchronize()
         } catch {
-            print("[GameState] Ошибка при кодировании: \(error)")
+            print("[GameState] coding error: \(error)")
         }
     }
     

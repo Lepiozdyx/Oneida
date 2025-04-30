@@ -52,11 +52,7 @@ final class MemoryGameViewModel: ObservableObject {
         secondCardRevealed = nil
         isProcessingPair = false
         gameState = .initial
-        startGame()
-    }
-    
-    func startGame() {
-        startCountdown()
+        startGameplay()
     }
     
     func resetGame() {
@@ -130,24 +126,7 @@ final class MemoryGameViewModel: ObservableObject {
         }
     }
     
-    private func startCountdown() {
-        var countdown = MemoryGameConstants.countdownDuration
-        gameState = .countdown(countdown)
-        
-        countdownTimer = Timer.publish(every: 1, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                countdown -= 1
-                if countdown > 0 {
-                    self?.gameState = .countdown(countdown)
-                } else {
-                    self?.countdownTimer?.cancel()
-                    self?.startGameplay()
-                }
-            }
-    }
-    
-    private func startGameplay() {
+    func startGameplay() {
         gameState = .playing
         startGameTimer()
     }

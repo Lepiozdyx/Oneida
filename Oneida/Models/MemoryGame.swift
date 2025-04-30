@@ -42,7 +42,6 @@ enum MemoryCardState {
 
 enum MemoryGameState: Equatable {
     case initial
-    case countdown(Int)
     case playing
     case paused
     case finished(success: Bool)

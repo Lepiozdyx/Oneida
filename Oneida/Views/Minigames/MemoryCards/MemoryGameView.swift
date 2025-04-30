@@ -18,9 +18,6 @@ struct MemoryGameView: View {
                 AppBackgroundView(background: Color.deepPurple)
                 
                 switch viewModel.gameState {
-                case .countdown(let count):
-                    countdownView(count: count)
-                    
                 case .playing, .paused, .initial:
                     VStack {
                         memoryGameStatusBar(
@@ -64,7 +61,7 @@ struct MemoryGameView: View {
                 }
             }
             .onAppear {
-                viewModel.startGame()
+                viewModel.startGameplay()
             }
             .onDisappear {
                 viewModel.cleanup()

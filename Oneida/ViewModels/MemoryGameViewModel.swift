@@ -10,7 +10,7 @@ import Combine
 
 @MainActor
 final class MemoryGameViewModel: ObservableObject {
-    // MARK: - Published Properties
+    
     @Published private(set) var gameState: MemoryGameState = .initial
     @Published private(set) var cards: [MemoryCard] = []
     @Published private(set) var timeRemaining: TimeInterval = MemoryGameConstants.gameDuration
@@ -19,7 +19,6 @@ final class MemoryGameViewModel: ObservableObject {
     @Published var showingPauseMenu = false
     @Published private(set) var isProcessingPair = false
     
-    // MARK: - Computed Properties
     var disableCardInteraction: Bool {
         let faceUpCount = cards.filter { $0.state == .faceUp }.count
         return gameState != .playing ||
@@ -36,21 +35,17 @@ final class MemoryGameViewModel: ObservableObject {
         MemoryGameConstants.pairsCount
     }
     
-    // MARK: - Private Properties
     private var gameTimer: AnyCancellable?
     private var countdownTimer: AnyCancellable?
     private var cancellables = Set<AnyCancellable>()
     private let onGameComplete: ((Bool) -> Void)?
     
-    // MARK: - Initialization
     init(onGameComplete: ((Bool) -> Void)? = nil) {
         self.onGameComplete = onGameComplete
         setupNewGame()
     }
     
-    // MARK: - Public Methods
     func setupNewGame() {
-        // Generate cards
         cards = MemoryBoardConfiguration.generateCards()
         timeRemaining = MemoryGameConstants.gameDuration
         firstCardRevealed = nil
@@ -135,7 +130,6 @@ final class MemoryGameViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Private Methods
     private func startCountdown() {
         var countdown = MemoryGameConstants.countdownDuration
         gameState = .countdown(countdown)

@@ -68,7 +68,6 @@ struct MemoryCard: Identifiable, Equatable {
     }
 }
 
-// MARK: - Board Setup Configurations
 struct MemoryBoardConfiguration {
     static let boardSize = 4
     static let totalCards = 12

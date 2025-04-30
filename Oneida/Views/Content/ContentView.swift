@@ -57,8 +57,7 @@ struct ContentView: View {
                     .environmentObject(appViewModel)
                 
             case .guessNumber:
-                Text("GuessNumber")
-//                GuessNumberView()
+                GuessNumberView()
                     .environmentObject(appViewModel)
                 
             case .sequence:

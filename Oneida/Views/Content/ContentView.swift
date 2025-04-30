@@ -62,8 +62,7 @@ struct ContentView: View {
                     .environmentObject(appViewModel)
                 
             case .sequence:
-                Text("SequenceGame")
-//                SequenceGameView()
+                SequenceGameView()
                     .environmentObject(appViewModel)
             }
         }

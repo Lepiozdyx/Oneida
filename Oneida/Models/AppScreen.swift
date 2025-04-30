@@ -16,4 +16,8 @@ enum AppScreen: CaseIterable {
     case shop
     case achievements
     case quiz
+    
+    case memoryCards
+    case guessNumber
+    case sequence
 }

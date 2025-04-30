@@ -21,53 +21,53 @@ struct QuizQuestion: Identifiable {
 struct MusicQuiz {
     static let questions = [
         QuizQuestion(
-            question: "Какой инструмент традиционно считается «королем инструментов»?",
-            options: ["Скрипка", "Орган", "Фортепиано"],
+            question: "Which instrument is traditionally considered the 'king of instruments'?",
+            options: ["Violin", "Organ", "Piano"],
             correctOptionIndex: 1
         ),
         QuizQuestion(
-            question: "Какой композитор известен как «король вальса»?",
-            options: ["Фредерик Шопен", "Петр Чайковский", "Иоганн Штраус"],
+            question: "Which composer is known as the 'Waltz King'?",
+            options: ["Frederic Chopin", "Pyotr Tchaikovsky", "Johann Strauss"],
             correctOptionIndex: 2
         ),
         QuizQuestion(
-            question: "Какой из этих музыкальных стилей возник в 1970-х годах?",
-            options: ["Джаз", "Панк-рок", "Блюз"],
+            question: "Which of these music genres emerged in the 1970s?",
+            options: ["Jazz", "Punk rock", "Blues"],
             correctOptionIndex: 1
         ),
         QuizQuestion(
-            question: "Какие ноты в музыке называют октавой?",
-            options: ["5 нот", "8 нот", "10 нот"],
+            question: "How many notes are in a musical octave?",
+            options: ["5 notes", "8 notes", "10 notes"],
             correctOptionIndex: 1
         ),
         QuizQuestion(
-            question: "Какой знак в нотной грамоте повышает звук на полтона?",
-            options: ["Бемоль", "Диез", "Бекар"],
+            question: "Which symbol in musical notation raises a note by a half-step?",
+            options: ["Flat", "Sharp", "Natural"],
             correctOptionIndex: 1
         ),
         QuizQuestion(
-            question: "Из скольки линеек состоит нотный стан?",
+            question: "How many lines does a musical staff have?",
             options: ["3", "4", "5"],
             correctOptionIndex: 2
         ),
         QuizQuestion(
-            question: "Какой музыкальный инструмент является самым древним?",
-            options: ["Барабан", "Флейта", "Арфа"],
+            question: "Which musical instrument is considered the oldest?",
+            options: ["Drum", "Flute", "Harp"],
             correctOptionIndex: 1
         ),
         QuizQuestion(
-            question: "Кто из этих музыкантов известен как «король рок-н-ролла»?",
-            options: ["Фредди Меркьюри", "Элвис Пресли", "Майкл Джексон"],
+            question: "Who among these musicians is known as the 'King of Rock and Roll'?",
+            options: ["Freddie Mercury", "Elvis Presley", "Michael Jackson"],
             correctOptionIndex: 1
         ),
         QuizQuestion(
-            question: "Какой музыкальный жанр появился в США в начале 20 века в афроамериканской среде?",
-            options: ["Рок", "Джаз", "Техно"],
+            question: "Which musical genre originated in the US in the early 20th century within African American communities?",
+            options: ["Rock", "Jazz", "Techno"],
             correctOptionIndex: 1
         ),
         QuizQuestion(
-            question: "Какой инструмент НЕ относится к струнным?",
-            options: ["Скрипка", "Виолончель", "Флейта"],
+            question: "Which instrument is NOT a string instrument?",
+            options: ["Violin", "Cello", "Flute"],
             correctOptionIndex: 2
         )
     ]

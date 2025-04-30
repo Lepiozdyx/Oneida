@@ -28,10 +28,6 @@ struct ContentView: View {
                 GameView()
                     .environmentObject(appViewModel)
                 
-            case .miniGames:
-                Text("Мини-игры")
-                    .environmentObject(appViewModel)
-                
             case .settings:
                 SettingsView()
                     .environmentObject(appViewModel)
@@ -51,6 +47,24 @@ struct ContentView: View {
                         .zIndex(100)
                         .environmentObject(appViewModel)
                 }
+                
+            case .miniGames:
+                MiniGamesView()
+                    .environmentObject(appViewModel)
+                
+            case .memoryCards:
+                MemoryGameView()
+                    .environmentObject(appViewModel)
+                
+            case .guessNumber:
+                Text("GuessNumber")
+//                GuessNumberView()
+                    .environmentObject(appViewModel)
+                
+            case .sequence:
+                Text("SequenceGame")
+//                SequenceGameView()
+                    .environmentObject(appViewModel)
             }
         }
         .onAppear {

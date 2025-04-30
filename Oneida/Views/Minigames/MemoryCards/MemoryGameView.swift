@@ -48,16 +48,12 @@ struct MemoryGameView: View {
                         Spacer()
                     }
                     
-                case .finished(_):
-                    EmptyView()
+                case .finished(let success):
+                    gameOverView(success: success)
                 }
                 
                 if viewModel.showingPauseMenu {
                     pauseMenuView
-                }
-                
-                if case .finished(let success) = viewModel.gameState {
-                    gameOverView(success: success)
                 }
             }
             .onAppear {

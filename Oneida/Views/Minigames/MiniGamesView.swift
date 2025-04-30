@@ -70,7 +70,7 @@ struct MiniGamesView: View {
                 .background(
                     Image(.frame)
                         .resizable()
-                        .frame(maxWidth: 350, minHeight: 400)
+                        .frame(width: 350, height: 400)
                 )
                 .opacity(settingsOpacity)
                 .offset(y: settingsOffset)

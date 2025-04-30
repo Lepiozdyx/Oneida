@@ -17,14 +17,12 @@ struct MemoryGameView: View {
             ZStack {
                 AppBackgroundView(background: Color.deepPurple)
                 
-                // Game content
                 switch viewModel.gameState {
                 case .countdown(let count):
                     countdownView(count: count)
                     
                 case .playing, .paused, .initial:
                     VStack {
-                        // Timer and Pause button
                         memoryGameStatusBar(
                             timeRemaining: viewModel.timeRemaining,
                             onBackTap: {
@@ -41,11 +39,9 @@ struct MemoryGameView: View {
                         
                         Spacer()
                         
-                        // Game board
                         memoryGameBoard
                             .padding()
                         
-                        // Matched pairs indicator
                         pairsProgressView(
                             matched: viewModel.pairsMatched,
                             total: viewModel.totalPairs
@@ -59,12 +55,10 @@ struct MemoryGameView: View {
                     EmptyView()
                 }
                 
-                // Pause menu
                 if viewModel.showingPauseMenu {
                     pauseMenuView
                 }
                 
-                // Game over screen
                 if case .finished(let success) = viewModel.gameState {
                     gameOverView(success: success)
                 }
@@ -168,7 +162,6 @@ struct MemoryGameView: View {
     private func countdownView(count: Int) -> some View {
         Text("\(count)")
             .specialFont(80)
-            .scaleEffect(1.2)
     }
     
     private var pauseMenuView: some View {

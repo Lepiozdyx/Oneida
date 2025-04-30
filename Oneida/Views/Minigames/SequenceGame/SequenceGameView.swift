@@ -57,9 +57,8 @@ struct SequenceGameView: View {
                     VStack(spacing: 40) {
                         Image(.tile2)
                             .resizable()
-                            .frame(width: min(geometry.size.width * 0.8, 100), height: min(geometry.size.width * 0.8, 100))
+                            .frame(width: 150, height: 150)
                             .overlay {
-                                // Текущее отображаемое изображение
                                 if let currentImage = viewModel.currentShowingImage {
                                     Image(currentImage.imageName)
                                         .resizable()
@@ -70,9 +69,10 @@ struct SequenceGameView: View {
                                 } else if viewModel.gameState == .playing {
                                     Image(.tile)
                                         .resizable()
-                                        .frame(width: min(geometry.size.width * 0.8, 100), height: min(geometry.size.width * 0.8, 100))
+                                        .frame(width: 150, height: 150)
                                 }
                             }
+                            .padding(.top)
                         
                         LazyVGrid(columns: [
                             GridItem(.flexible()),
@@ -129,7 +129,7 @@ struct SequenceGameView: View {
                         .scaledToFit()
                         .padding(10)
                 }
-                .frame(width: 80, height: 80)
+                .frame(width: 90, height: 90)
                 .opacity(disabled ? 0.6 : 1.0)
             }
             .disabled(disabled)

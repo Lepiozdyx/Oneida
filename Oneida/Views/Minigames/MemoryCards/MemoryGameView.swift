@@ -18,7 +18,7 @@ struct MemoryGameView: View {
                 AppBackgroundView(background: Color.deepPurple)
                 
                 switch viewModel.gameState {
-                case .playing, .paused, .initial:
+                case .playing:
                     VStack {
                         memoryGameStatusBar(
                             timeRemaining: viewModel.timeRemaining,
@@ -28,7 +28,7 @@ struct MemoryGameView: View {
                             },
                             onPauseTap: {
                                 svm.play()
-                                viewModel.togglePauseMenu()
+                                viewModel.togglePause()
                             }
                         )
                         .padding(.top)
@@ -43,17 +43,15 @@ struct MemoryGameView: View {
                             matched: viewModel.pairsMatched,
                             total: viewModel.totalPairs
                         )
-                        .padding(.bottom)
                         
                         Spacer()
                     }
                     
+                case .paused:
+                    pauseMenuView
+                    
                 case .finished(let success):
                     gameOverView(success: success)
-                }
-                
-                if viewModel.showingPauseMenu {
-                    pauseMenuView
                 }
             }
             .onAppear {
@@ -152,14 +150,9 @@ struct MemoryGameView: View {
         }
     }
     
-    private func countdownView(count: Int) -> some View {
-        Text("\(count)")
-            .specialFont(80)
-    }
-    
     private var pauseMenuView: some View {
         ZStack {
-            Color.black.opacity(0.5)
+            Color.black.opacity(0.1)
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 20) {
@@ -168,11 +161,10 @@ struct MemoryGameView: View {
                 
                 Button {
                     svm.play()
-                    viewModel.togglePauseMenu()
+                    viewModel.togglePause()
                 } label: {
                     MainActionView(width: 200, height: 50, text: "Continue", textSize: 24)
                 }
-
             }
             .padding()
             .background(
@@ -186,7 +178,7 @@ struct MemoryGameView: View {
     
     private func gameOverView(success: Bool) -> some View {
         ZStack {
-            Color.black.opacity(0.5)
+            Color.black.opacity(0.1)
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 20) {

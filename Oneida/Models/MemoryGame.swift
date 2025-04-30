@@ -10,7 +10,6 @@ import SwiftUI
 enum MemoryGameConstants {
     static let gameDuration: TimeInterval = 45
     static let pairsCount = 6
-    static let countdownDuration: Int = 2
     static let animationDuration: TimeInterval = 0.3
 }
 
@@ -41,7 +40,6 @@ enum MemoryCardState {
 }
 
 enum MemoryGameState: Equatable {
-    case initial
     case playing
     case paused
     case finished(success: Bool)

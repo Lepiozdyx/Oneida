@@ -11,18 +11,16 @@ import Combine
 @MainActor
 final class MemoryGameViewModel: ObservableObject {
     
-    @Published private(set) var gameState: MemoryGameState = .initial
+    @Published private(set) var gameState: MemoryGameState = .playing
     @Published private(set) var cards: [MemoryCard] = []
     @Published private(set) var timeRemaining: TimeInterval = MemoryGameConstants.gameDuration
     @Published private(set) var firstCardRevealed: MemoryCard? = nil
     @Published private(set) var secondCardRevealed: MemoryCard? = nil
-    @Published var showingPauseMenu = false
     @Published private(set) var isProcessingPair = false
     
     var disableCardInteraction: Bool {
         let faceUpCount = cards.filter { $0.state == .faceUp }.count
         return gameState != .playing ||
-               showingPauseMenu ||
                isProcessingPair ||
                faceUpCount >= 2
     }
@@ -36,7 +34,6 @@ final class MemoryGameViewModel: ObservableObject {
     }
     
     private var gameTimer: AnyCancellable?
-    private var countdownTimer: AnyCancellable?
     private var cancellables = Set<AnyCancellable>()
     private let onGameComplete: ((Bool) -> Void)?
     
@@ -51,14 +48,12 @@ final class MemoryGameViewModel: ObservableObject {
         firstCardRevealed = nil
         secondCardRevealed = nil
         isProcessingPair = false
-        gameState = .initial
         startGameplay()
     }
     
     func resetGame() {
         cleanup()
         setupNewGame()
-        showingPauseMenu = false
     }
     
     func pauseGame() {
@@ -73,13 +68,12 @@ final class MemoryGameViewModel: ObservableObject {
         startGameTimer()
     }
     
-    func togglePauseMenu() {
-        if showingPauseMenu {
+    func togglePause() {
+        if case .paused = gameState {
             resumeGame()
-        } else {
+        } else if case .playing = gameState {
             pauseGame()
         }
-        showingPauseMenu.toggle()
     }
     
     func completeGame() {
@@ -89,7 +83,6 @@ final class MemoryGameViewModel: ObservableObject {
     
     func cleanup() {
         gameTimer?.cancel()
-        countdownTimer?.cancel()
     }
     
     func flipCard(at position: MemoryCard.Position) {

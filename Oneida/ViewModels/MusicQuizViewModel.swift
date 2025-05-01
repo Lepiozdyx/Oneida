@@ -1,13 +1,9 @@
 //  MusicQuizViewModel.swift
 //  Oneida
-//
-//  Created by Alex on 27.04.2025.
-//
 
 import SwiftUI
 import Combine
 
-// Добавляем протокол делегата для коммуникации с GameViewModel
 protocol MusicQuizViewModelDelegate: AnyObject {
     func quizDidComplete(earnedCoins: Int)
 }
@@ -55,7 +51,6 @@ class MusicQuizViewModel: ObservableObject {
         earnedCoins = 0
         animateProgress = false
         
-        // Запускаем анимацию прогресса после короткой задержки
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.animateProgress = true
         }
@@ -72,7 +67,6 @@ class MusicQuizViewModel: ObservableObject {
             earnedCoins += 10
         }
         
-        // После небольшой задержки переходим к следующему вопросу
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.proceedToNextQuestion()
         }
@@ -85,7 +79,6 @@ class MusicQuizViewModel: ObservableObject {
         if currentQuestionIndex < questions.count - 1 {
             currentQuestionIndex += 1
             
-            // Анимируем прогресс-бар
             animateProgress = false
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 self.animateProgress = true
@@ -97,9 +90,6 @@ class MusicQuizViewModel: ObservableObject {
     
     func completeQuiz() {
         quizCompleted = true
-        
-        // Уведомляем делегата о завершении квиза через 1.5 секунды
-        // (чтобы пользователь успел увидеть результат)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             self.delegate?.quizDidComplete(earnedCoins: self.earnedCoins)
         }

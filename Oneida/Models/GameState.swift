@@ -1,9 +1,6 @@
 //
 //  GameState.swift
 //  Oneida
-//
-//  Created by Alex on 27.04.2025.
-//
 
 import Foundation
 
@@ -14,10 +11,10 @@ struct GameState: Codable {
     var lastLoginDate: Date?
     
     // Достижения
-    var completedAchievements: [String] = [] // Достигнутые, но еще не полученные награды
-    var notifiedAchievements: [String] = [] // Достигнутые и уже полученные награды
+    var completedAchievements: [String] = []
+    var notifiedAchievements: [String] = []
     
-    var unlockedMiniGames: [String] = ["guess_number"] // Начальная разблокированная мини-игра
+    var unlockedMiniGames: [String] = ["guess_number"]
     var purchasedThemes: [String] = ["default"]
     var currentThemeId: String = "default"
     
@@ -28,10 +25,9 @@ struct GameState: Codable {
     
     var tutorialCompleted: Bool = false
     
-    // Трекинг для достижений
     var levelsCompleted: Int = 0
     var notesCollected: Int = 0
-    var perfectLevels: Int = 0 // Для "Perfect Melody" achievement
+    var perfectLevels: Int = 0
     
     var lastDailyRewardClaimDate: Date?
     

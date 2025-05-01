@@ -1,7 +1,5 @@
 //  GameViewModel.swift
 //  Oneida
-//  Created by Alex on 27.04.2025.
-//
 
 import SwiftUI
 import SpriteKit
@@ -45,9 +43,8 @@ class GameViewModel: ObservableObject {
     // MARK: - Public Methods
     
     func setupScene(size: CGSize) -> GameScene {
-        // Получаем текущие идентификаторы тем из appViewModel
-        let instrumentId = appViewModel?.gameState.currentInstrumentId ?? "guitar" // По умолчанию
-        let backgroundId = appViewModel?.gameState.currentBackgroundId ?? "bg2" // По умолчанию
+        let instrumentId = appViewModel?.gameState.currentInstrumentId ?? "guitar"
+        let backgroundId = appViewModel?.gameState.currentBackgroundId ?? "bg2"
         
         let scene = GameScene(size: size, instrumentId: instrumentId, backgroundId: backgroundId)
         scene.scaleMode = .aspectFill
@@ -57,27 +54,22 @@ class GameViewModel: ObservableObject {
     }
     
     func togglePause(_ paused: Bool) {
-        // Не ставим на паузу, если уже показывается какой-либо оверлей
         if paused && (showVictoryOverlay || showDefeatOverlay) {
             return
         }
         
-        // Устанавливаем состояние паузы
         isPaused = paused
         
         if paused {
-            // Останавливаем таймеры при паузе
             gameTimer?.invalidate()
             targetNoteTimer?.invalidate()
             gameScene?.pauseGame()
         } else {
-            // Возобновляем таймеры при снятии с паузы
             startGameTimer()
             startTargetNoteTimer()
             gameScene?.resumeGame()
         }
         
-        // Явно вызываем обновление UI через main thread
         DispatchQueue.main.async { [weak self] in
             self?.objectWillChange.send()
         }
@@ -92,46 +84,36 @@ class GameViewModel: ObservableObject {
     }
     
     func resetGame() {
-        // Критически важно! Сначала сбрасываем флаги оверлеев перед асинхронными операциями
         self.showVictoryOverlay = false
         self.showDefeatOverlay = false
         
-        // Даем сигнал на обновление UI немедленно
         self.objectWillChange.send()
         
-        // Далее выполняем остальные операции сброса
         gameTimer?.invalidate()
         targetNoteTimer?.invalidate()
         gameScene?.pauseGame()
         
-        // Асинхронное выполнение остальных операций сброса
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // Сбрасываем все остальные значения
             self.score = 0
             self.lives = 5
             self.timeRemaining = 60.0
             self.isPaused = false
             
-            // Сбрасываем счетчики достижений
             self.consecutiveCorrectNotes = 0
             self.totalWrongNotes = 0
             self.missedNoteColors = []
             self.notesIn5Seconds = 0
             self.recentNotesTimestamps = []
             
-            // Повторно сбрасываем флаги оверлеев для гарантии
             self.showVictoryOverlay = false
             self.showDefeatOverlay = false
             
-            // Устанавливаем новые таймеры
             self.setupTimers()
             
-            // Сбрасываем сцену
             self.gameScene?.resetGame()
             
-            // Снова обновляем UI
             self.objectWillChange.send()
         }
     }
@@ -167,10 +149,8 @@ class GameViewModel: ObservableObject {
     // MARK: - Private Methods
     
     private func setupTimers() {
-        // Начальный целевой цвет
         targetNoteType = NoteType.random(excludingKey: true)
         
-        // Запускаем таймеры с нуля
         gameTimer?.invalidate()
         targetNoteTimer?.invalidate()
         
@@ -186,12 +166,10 @@ class GameViewModel: ObservableObject {
             
             self.timeRemaining -= 0.1
             
-            // Обновляем UI с каждым тиком таймера
             DispatchQueue.main.async {
                 self.objectWillChange.send()
             }
             
-            // Проверяем, закончилось ли время
             if self.timeRemaining <= 0 {
                 self.gameOver(win: true)
             }
@@ -201,7 +179,6 @@ class GameViewModel: ObservableObject {
     private func startTargetNoteTimer() {
         targetNoteTimer?.invalidate()
         
-        // Меняем целевую ноту каждые 10 секунд
         targetNoteTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
             guard let self = self, !self.isPaused else { return }
             
@@ -212,7 +189,6 @@ class GameViewModel: ObservableObject {
             
             self.targetNoteType = newType
             
-            // Обновляем UI при смене целевой ноты
             DispatchQueue.main.async {
                 self.objectWillChange.send()
             }
@@ -220,16 +196,13 @@ class GameViewModel: ObservableObject {
     }
     
     private func gameOver(win: Bool) {
-        // Остановка всех игровых процессов
         cleanup()
         
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // Показываем соответствующий оверлей
             if win {
                 self.showVictoryOverlay = true
-                // Проверяем достижения перед вызовом showVictory
                 self.appViewModel?.checkAchievements(gameViewModel: self)
                 self.appViewModel?.showVictory()
             } else {
@@ -237,7 +210,6 @@ class GameViewModel: ObservableObject {
                 self.appViewModel?.showDefeat()
             }
             
-            // Явное обновление UI
             self.objectWillChange.send()
         }
     }
@@ -254,29 +226,24 @@ class GameViewModel: ObservableObject {
 extension GameViewModel: GameSceneDelegate {
     func didCollectNote(ofType type: NoteType) {
         if type == targetNoteType {
-            // Правильная нота - начисляем очки
             score += 1
             appViewModel?.gameState.notesCollected += 1
             updateAchievementTracking(noteType: type, isCorrect: true)
         } else {
-            // Неправильная нота - отнимаем жизнь
             lives -= 1
             updateAchievementTracking(noteType: type, isCorrect: false)
             
-            // Проверяем условие поражения
             if lives <= 0 {
                 gameOver(win: false)
             }
         }
         
-        // Обновляем UI
         DispatchQueue.main.async { [weak self] in
             self?.objectWillChange.send()
         }
     }
     
     func didMissNote(ofType type: NoteType) {
-        // Для достижения Colour Symphony отслеживаем пропущенные ноты
         if type == targetNoteType {
             missedNoteColors.insert(type)
         }

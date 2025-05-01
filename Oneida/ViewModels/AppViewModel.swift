@@ -1,7 +1,5 @@
 //  GameViewModel.swift
 //  Oneida
-//  Created by Alex on 27.04.2025.
-//
 
 import SwiftUI
 import Combine
@@ -179,8 +177,6 @@ class AppViewModel: ObservableObject {
         gameLevel = 1
     }
     
-    // MARK: - Achievement Methods
-    
     func checkAchievements(gameViewModel: GameViewModel) {
         if achievementViewModel == nil {
             achievementViewModel = AchievementViewModel()
@@ -191,7 +187,6 @@ class AppViewModel: ObservableObject {
     }
 }
 
-// MARK: - MusicQuizViewModelDelegate
 extension AppViewModel: MusicQuizViewModelDelegate {
     func quizDidComplete(earnedCoins: Int) {
         DispatchQueue.main.async { [weak self] in

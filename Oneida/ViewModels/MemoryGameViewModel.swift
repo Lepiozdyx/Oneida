@@ -1,9 +1,7 @@
 //
 //  MemoryGameViewModel.swift
 //  Oneida
-//
-//  Created by Alex on 30.04.2025.
-//
+
 
 import SwiftUI
 import Combine

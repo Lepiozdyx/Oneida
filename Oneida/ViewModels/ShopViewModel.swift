@@ -1,7 +1,6 @@
 //
 //  ShopViewModel.swift
 //  Oneida
-//
 
 import SwiftUI
 import Combine
@@ -27,8 +26,6 @@ class ShopViewModel: ObservableObject {
         availableBackgrounds = BackgroundItem.availableBackgrounds
     }
     
-    // MARK: - Instruments
-    
     func isInstrumentPurchased(_ id: String) -> Bool {
         guard let gameState = appViewModel?.gameState else { return false }
         return id == "guitar" || gameState.purchasedThemes.contains(id)
@@ -44,22 +41,18 @@ class ShopViewModel: ObservableObject {
               let instrument = InstrumentItem.availableInstruments.first(where: { $0.id == id }),
               appViewModel.coins >= instrument.price else { return }
         
-        // Deduct coins
         appViewModel.addCoins(-instrument.price)
         
-        // Add to purchased themes
         if !appViewModel.gameState.purchasedThemes.contains(id) {
             appViewModel.gameState.purchasedThemes.append(id)
         }
-        
-        // Store instrument type
+
         if !appViewModel.gameState.purchasedInstruments.contains(id) {
             appViewModel.gameState.purchasedInstruments.append(id)
         }
         
         appViewModel.saveGameState()
         
-        // Select the newly purchased instrument
         selectInstrument(id)
     }
     
@@ -70,11 +63,8 @@ class ShopViewModel: ObservableObject {
         appViewModel.gameState.currentInstrumentId = id
         appViewModel.saveGameState()
         
-        // Update UI
         objectWillChange.send()
     }
-    
-    // MARK: - Backgrounds
     
     func isBackgroundPurchased(_ id: String) -> Bool {
         guard let gameState = appViewModel?.gameState else { return false }
@@ -91,22 +81,18 @@ class ShopViewModel: ObservableObject {
               let background = BackgroundItem.availableBackgrounds.first(where: { $0.id == id }),
               appViewModel.coins >= background.price else { return }
         
-        // Deduct coins
         appViewModel.addCoins(-background.price)
         
-        // Add to purchased themes
         if !appViewModel.gameState.purchasedThemes.contains(id) {
             appViewModel.gameState.purchasedThemes.append(id)
         }
         
-        // Store background type
         if !appViewModel.gameState.purchasedBackgrounds.contains(id) {
             appViewModel.gameState.purchasedBackgrounds.append(id)
         }
         
         appViewModel.saveGameState()
         
-        // Select the newly purchased background
         selectBackground(id)
     }
     
@@ -117,7 +103,6 @@ class ShopViewModel: ObservableObject {
         appViewModel.gameState.currentBackgroundId = id
         appViewModel.saveGameState()
         
-        // Update UI
         objectWillChange.send()
     }
 }

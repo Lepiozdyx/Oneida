@@ -1,7 +1,6 @@
 //
 //  InstrumentItem.swift
 //  Oneida
-//
 
 import SwiftUI
 

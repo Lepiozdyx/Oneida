@@ -1,9 +1,6 @@
 //
 //  OneidaApp.swift
 //  Oneida
-//
-//  Created by Alex on 27.04.2025.
-//
 
 import SwiftUI
 
@@ -11,7 +8,7 @@ import SwiftUI
 struct OneidaApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SourceView()
         }
     }
 }

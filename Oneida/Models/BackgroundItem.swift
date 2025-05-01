@@ -1,7 +1,6 @@
 //
 //  BackgroundItem.swift
 //  Oneida
-//
 
 import SwiftUI
 

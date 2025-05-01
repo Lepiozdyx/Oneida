@@ -1,9 +1,6 @@
 //
 //  SettingsViewModel.swift
 //  Oneida
-//
-//  Created by Alex on 27.04.2025.
-//
 
 import SwiftUI
 import AVFoundation
@@ -40,8 +37,8 @@ import AVFoundation
     private var soundPlayer: AVAudioPlayer?
     private let soundKey = "appsound"
     private let musicKey = "appmusic"
-    private let soundResourceName = "buttonSound"    // звук клика кнопки
-    private let musicResourceName = "pianoBack"   // фоновая музыка
+    private let soundResourceName = "buttonSound"
+    private let musicResourceName = "pianoBack"
     
     private init() {
         self.soundIsOn = true
@@ -64,7 +61,6 @@ import AVFoundation
         fetchSound()
     }
     
-    // MARK: - Methods
     func toggleSound() {
         soundIsOn.toggle()
     }

@@ -2,19 +2,16 @@ import SwiftUI
 import Combine
 
 class GuessNumberViewModel: ObservableObject {
-    // Состояния игры
     enum GuessGameState: Equatable {
         case playing
         case guessed(correct: Bool, message: String)
     }
     
-    // Published свойства
     @Published private(set) var gameState: GuessGameState = .playing
     @Published private(set) var targetNumber: Int = 0
     @Published private(set) var attempts: Int = 0
     @Published private(set) var feedbackMessage: String = "Use the slider to guess the number"
     
-    // Константы
     private let minNumber = 0
     private let maxNumber = 999
     

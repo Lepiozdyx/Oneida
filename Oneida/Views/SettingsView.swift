@@ -91,7 +91,7 @@ struct SettingsView: View {
                 
                 Spacer()
                 
-                Text("Version 1.0")
+                Text("Version 1.1")
                     .specialFont(12, color: .white.opacity(0.7))
                     .padding(.bottom, 4)
                     .opacity(settingsOpacity)
